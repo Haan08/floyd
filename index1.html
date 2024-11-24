@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floyd-Warshall Algorithm Visualization</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('your-image-path.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 90%;
+      max-width: 1200px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .section {
+      margin-bottom: 20px;
+      text-align: center;
+      width: 100%;
+    }
+
+    h1 {
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px 10px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .matrix-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .matrix {
+      display: grid;
+      gap: 5px;
+      margin: 20px 0;
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      font-size: 18px;
+      color: transparent;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .cell.revealed {
+      color: #333;
+    }
+
+    .cell.infinite {
+      color: transparent;
+    }
+
+    .step-details {
+      font-size: 18px;
+      color: #ddd;
+      text-align: left;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .question-img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 50px repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .matrix-label {
+      justify-self: center;
+      align-self: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Title Section -->
+    <div class="section">
+      <h1>Floyd-Warshall Algorithm</h1>
+      <p>Visualize the step-by-step computation of the shortest path matrix.</p>
+    </div>
+
+    <!-- Question Image Section -->
+    <div class="section">
+      <h2>Question:</h2>
+      <img src="graph.jpg" alt="Question Image" class="question-img">
+    </div>
+
+    <!-- Visualization Section -->
+    <div id="matrix-container" class="matrix-container"></div>
+
+    <!-- Step-by-Step Execution -->
+    <div id="step-details" class="step-details"></div>
+
+    <!-- Buttons -->
+    <div>
+      <button id="RV-btn" class="hidden">RV</button>
+      <button id="next-btn">Next Step</button>
+    </div>
+  </div>
+
+  <script>
+    const matrices = [
+      {
+        description: "Step 1: Initialization (A⁰)",
+        data: [
+          [0, 3, Infinity, 7],
+          [Infinity, 0, 2, Infinity],
+          [Infinity, Infinity, 0, 1],
+          [2, Infinity, 5, 0],
+        ],
+        details: `
+          <strong>Step 1:</strong> Initialize the distance matrix:
+          <ul>
+            <li>A⁰[i][i] = 0 (distance from a vertex to itself is 0)</li>
+            <li>A⁰[i][j] = weight(i, j) if there is an edge between i and j</li>
+            <li>A⁰[i][j] = ∞ if there is no edge between i and j</li>
+          </ul>
+        `,
+      },
+      {
+        description: "Step 2: Using Vertex 1 as Intermediate (A¹)",
+        data: [
+          [0, 3, Infinity, 7],
+          [8, 0, 2, Infinity],
+          [Infinity, Infinity, 0, 1],
+          [2, 5, 5, 0],
+        ],
+        details: `
+          <strong>Step 2:</strong> Update the matrix using vertex 1 as an intermediate.
+          <ul>
+            <li>A¹[i][j] = min(A⁰[i][j], A⁰[i][1] + A⁰[1][j])</li>
+          </ul>
+        `,
+      },
+      {
+        description: "Step 3: Using Vertex 2 as Intermediate (A²)",
+        data: [
+          [0, 3, 5, 7],
+          [8, 0, 2, 15],
+          [Infinity, Infinity, 0, 1],
+          [2, 5, 7, 0],
+        ],
+        details: `
+          <strong>Step 3:</strong> Update the matrix using vertex 2 as an intermediate.
+          <ul>
+            <li>A²[i][j] = min(A¹[i][j], A¹[i][2] + A¹[2][j])</li>
+          </ul>
+        `,
+      },
+      {
+        description: "Step 4: Using Vertex 3 as Intermediate (A³)",
+        data: [
+          [0, 3, 5, 6],
+          [7, 0, 2, 3],
+          [6, 9, 0, 1],
+          [2, 5, 7, 0],
+        ],
+        details: `
+          <strong>Step 4:</strong> Update the matrix using vertex 3 as an intermediate.
+          <ul>
+            <li>A³[i][j] = min(A²[i][j], A²[i][3] + A²[3][j])</li>
+          </ul>
+        `,
+      },
+    ];
+
+    const matrixContainer = document.getElementById("matrix-container");
+    const stepDetails = document.getElementById("step-details");
+    const RVBtn = document.getElementById("RV-btn");
+    const nextBtn = document.getElementById("next-btn");
+
+    let currentStep = 0;
+    let currentCellIndex = 0;
+
+    function createMatrixElement(matrix) {
+      const grid = document.createElement("div");
+      grid.classList.add("matrix-grid");
+      grid.style.gridTemplateColumns = `50px repeat(${matrix[0].length}, 1fr)`;
+
+      // Column labels
+      const labelCell = document.createElement("div");
+      labelCell.classList.add("matrix-label");
+      grid.appendChild(labelCell); // Empty cell at top left
+
+      for (let i = 0; i < matrix[0].length; i++) {
+        const label = document.createElement("div");
+        label.classList.add("matrix-label");
+        label.textContent = i + 1;
+        grid.appendChild(label);
+      }
+
+      // Row labels and cells
+      matrix.forEach((row, rowIndex) => {
+        const rowLabel = document.createElement("div");
+        rowLabel.classList.add("matrix-label");
+        rowLabel.textContent = rowIndex + 1;
+        grid.appendChild(rowLabel);
+
+        row.forEach(cell => {
+          const cellElement = document.createElement("div");
+          cellElement.classList.add("cell");
+          if (cell === Infinity) {
+            cellElement.textContent = "∞";
+            cellElement.classList.add("infinite");
+          } else {
+            cellElement.textContent = cell;
+          }
+          grid.appendChild(cellElement);
+        });
+      });
+
+      grid.style.display = "none"; // Initially hidden
+      matrixContainer.appendChild(grid);
+    }
+
+    function renderStep(index) {
+      const grids = matrixContainer.querySelectorAll(".matrix-grid");
+      grids.forEach((grid, i) => {
+        grid.style.display = i === index ? "grid" : "none";
+      });
+
+      stepDetails.innerHTML = matrices[index].details;
+      RVBtn.classList.remove("hidden");
+      currentCellIndex = 0; // Reset cell reveal index for each step
+      nextBtn.style.display = "none"; // Hide next step button after each step
+    }
+
+    function revealMatrixValues() {
+      const visibleGrid = matrixContainer.querySelector(".matrix-grid:not([style*='display: none'])");
+      if (visibleGrid) {
+        const cells = visibleGrid.querySelectorAll(".cell");
+        if (currentCellIndex < cells.length) {
+          const cell = cells[currentCellIndex];
+          cell.classList.add("revealed");
+          currentCellIndex++;
+        } else {
+          RVBtn.classList.add("hidden"); // Hide RV button when all cells are revealed
+          nextBtn.style.display = "inline-block"; // Show the next step button
+        }
+      }
+    }
+
+    // Initialize matrices
+    matrices.forEach(({ data }) => createMatrixElement(data));
+    renderStep(currentStep);
+
+    // Event listeners
+    RVBtn.addEventListener("click", revealMatrixValues);
+    nextBtn.addEventListener("click", () => {
+      if (currentStep < matrices.length - 1) {
+        currentStep++;
+        renderStep(currentStep);
+      }
+    });
+  </script>
+</body>
+</html>
