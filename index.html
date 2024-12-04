@@ -152,9 +152,9 @@
         description: "Step 1: Initialization (A⁰)",
         data: [
           [0, 3, Infinity, 7],
-          [Infinity, 0, 2, Infinity],
-          [Infinity, Infinity, 0, 1],
-          [2, Infinity, 5, 0],
+          [8, 0, 2, Infinity],
+          [5, Infinity, 0, 1],
+          [2, Infinity, Infinity, 0],
         ],
         details: `
           <strong>Step 1:</strong> Initialize the distance matrix:
@@ -169,9 +169,9 @@
         description: "Step 2: Using Vertex 1 as Intermediate (A¹)",
         data: [
           [0, 3, Infinity, 7],
-          [8, 0, 2, Infinity],
-          [Infinity, Infinity, 0, 1],
-          [2, 5, 5, 0],
+          [8, 0, 2, 15],
+          [5, 8, 0, 1],
+          [2, 5, Infinity, 0],
         ],
         details: `
           <strong>Step 2:</strong> Update the matrix using vertex 1 as an intermediate.
@@ -185,7 +185,7 @@
         data: [
           [0, 3, 5, 7],
           [8, 0, 2, 15],
-          [Infinity, Infinity, 0, 1],
+          [5, 8, 0, 1],
           [2, 5, 7, 0],
         ],
         details: `
@@ -200,13 +200,28 @@
         data: [
           [0, 3, 5, 6],
           [7, 0, 2, 3],
-          [6, 9, 0, 1],
+          [5, 8, 0, 1],
           [2, 5, 7, 0],
         ],
         details: `
           <strong>Step 4:</strong> Update the matrix using vertex 3 as an intermediate.
           <ul>
             <li>A³[i][j] = min(A²[i][j], A²[i][3] + A²[3][j])</li>
+          </ul>
+        `,
+      },
+      {
+        description: "Step 5: Using Vertex 4 as Intermediate (A4)",
+        data: [
+          [0, 3, 5, 6],
+          [5, 0, 2, 3],
+          [3, 6, 0, 1],
+          [2, 5, 7, 0],
+        ],
+        details: `
+          <strong>Step 4:</strong> Update the matrix using vertex 4 as an intermediate.
+          <ul>
+            <li>A4[i][j] = min(A3[i][j], A3[i][3] + A3[3][j])</li>
           </ul>
         `,
       },
